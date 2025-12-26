@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Basic page setup -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Haul Machines - 3D Store</title>
+
+  <!-- Main stylesheet -->
+
+
+  <link rel="stylesheet" href="ex.css" />
+  <link rel="stylesheet" href="scroll.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+  <!-- 3D model viewer for hero forklift -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <style>
+    /* Chatbot Styles */
+    .chatbot-toggle {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #a955ff;
+      color: white;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      z-index: 999;
+      transition: transform 0.2s ease;
+    }
+    .chatbot-toggle:hover {
+      transform: scale(1.1);
+    }
+
+    .chatbot {
+      position: fixed;
+      bottom: 100px;
+      right: 30px;
+      width: 350px;
+      max-width: 90vw;
+      height: 450px;
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 0 128px 0 rgba(0,0,0,0.1), 0 32px 64px -48px rgba(0,0,0,0.5);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 1000;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .chatbot.show {
+      display: flex;
+    }
+
+    .chatbot-header {
+      background: #a955ff;
+      color: #fff;
+      padding: 16px 0;
+      text-align: center;
+      position: relative;
+    }
+
+    .chatbot-header p {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    .chatbot-header .close-btn {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 1.5rem;
+    }
+
+    .chatbot-header .back-btn {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .chatbot-body {
+      flex-grow: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background-color: #f9f9f9;
+    }
+
+    .message { max-width: 80%; padding: 10px 15px; border-radius: 18px; word-wrap: break-word; line-height: 1.4; }
+    .message p { margin: 0; }
+    .bot-message { background: #e9e9eb; color: #000; align-self: flex-start; border-bottom-left-radius: 4px; }
+    .user-message { background: #a955ff; color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+    .chatbot-footer { display: flex; padding: 10px 20px; border-top: 1px solid #ddd; background: #fff; }
+    #chatbotInput { flex-grow: 1; border: 1px solid #ccc; border-radius: 20px; padding: 10px 15px; margin-right: 10px; outline: none; font-family: 'Poppins', sans-serif; }
+    #chatbotInput:focus { border-color: #a955ff; }
+    #chatbotSendBtn { background: #a955ff; color: white; border: none; padding: 0 15px; border-radius: 20px; cursor: pointer; font-weight: bold; }
+    .message a { color: #a955ff; }
+  </style>
+</head>
+<body>
+  <!-- =========================
+       HEADER + NAV + SEARCH + CART
+       ========================== -->
+  <header class="header">
+    <div class="logo">Haul<span>Machines</span></div>
+
+    <ul class="nav">
+      <li style="--i:#a955ff;--j:#ea51ff">
+        <a href="#home" class="nav-link">
+          <span class="title">Home</span>
+          <span class="icon"><ion-icon name="home-outline"></ion-icon></span>
+        </a>
+      </li>
+      
+      <li style="--i:#56CCF2;--j:#2F80ED">
+        <a href="#products" class="nav-link">
+          <span class="title">Products</span>
+          <span class="icon"><ion-icon name="cube-outline"></ion-icon></span>
+        </a>
+      </li>
+      <li style="--i:#FF9966;--j:#FF5E62">
+        <a href="#categories" class="nav-link">
+          <span class="title">Categories</span>
+          <span class="icon"><ion-icon name="grid-outline"></ion-icon></span>
+        </a>
+      </li>
+       <li style="--i:#80FF72;--j:#7EE8FA">
+        <a href="#services" class="nav-link">
+          <span class="title">Services</span>
+          <span class="icon"><ion-icon name="cog-outline"></ion-icon></span>
+        </a>
+      </li>
+       <li style="--i:#ffa9c6;--j:#f434e2">
+        <a href="#contact" class="nav-link">
+          <span class="title">Contact</span>
+          <span class="icon"><ion-icon name="call-outline"></ion-icon></span>
+        </a>
+      </li>
+      <li style="--i:#a955ff;--j:#ea51ff">
+        <a href="#faq" class="nav-link">
+          <span class="title">FAQ</span>
+          <span class="icon"><ion-icon name="help-circle-outline"></ion-icon></span>
+        </a>
+      </li>
+      <li style="--i:#56CCF2;--j:#2F80ED">
+        <a href="scroll-showcase.html" class="nav-link">
+          <span class="title">Animations</span>
+          <span class="icon"><ion-icon name="film-outline"></ion-icon></span>
+        </a>
+      </li>
+      <li style="--i:#FF9966;--j:#FF5E62">
+        <a href="#socials" class="nav-link">
+          <span class="title">Socials</span>
+          <span class="icon"><ion-icon name="share-social-outline"></ion-icon> </span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="search-wrapper">
+      <input id="searchInput" type="text" placeholder="Search machines..." />
+    </div>
+
+    <div class="cart-icon" id="cartOpenBtn">
+      🛒 <span id="cartCount">0</span>
+      
+    </div>
+  </header>
+
+  <!-- =========================
+       HERO SECTION (HOME)
+       ========================== -->
+  <section id="home" class="hero">
+    <div class="hero-text">
+      <p class="hero-kicker">Smart Industrial & Farming Machines</p>
+      <h1>Powerful Electric Forklifts for Modern Warehouses</h1>
+      <p class="hero-subtitle">
+        Reduce noise, emissions, and operating cost with high‑efficiency electric forklifts,
+        designed for 24/7 material handling.
+      </p>
+
+      <div class="hero-badges">
+        <span class="hero-badge">✔ 3.5 Ton lifting</span>
+        <span class="hero-badge">✔ Low maintenance</span>
+        <span class="hero-badge">✔ Indoor & outdoor use</span>
+      </div>
+
+      <div class="hero-cta-row">
+        <button class="btn primary" data-scroll="#products">Browse Machines</button>
+        <button class="btn secondary" data-scroll="#services">View Services</button>
+      </div>
+
+      <div class="hero-meta-row">
+        <div class="hero-meta-item">
+          <span class="hero-meta-number">50+</span>
+          <span class="hero-meta-label">Sites equipped</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-number">24/7</span>
+          <span class="hero-meta-label">Support availability</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="hero-meta-number">30%</span>
+          <span class="hero-meta-label">Avg. energy savings</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-3d">
+
+     <model-viewer
+          src="/public/assets/machine.glb"
+            camera-controls
+           auto-rotate>
+      </model-viewer>
+
+    </div>
+  </section>
+
+  <!-- =========================
+       SCROLL-TRIGGER TEXT STRIP (minor)
+       ========================== -->
+  <section class="section scroll-strip">
+    <div class="scroll-trigger-ready__worm-wrap">
+      <h2 class="scroll-strip__title">Built for tough industrial duty.</h2>
+      <p class="scroll-strip__text">
+        Scroll to explore electric forklifts, farming tractors, and industrial loaders optimized for your site.
+      </p>
+    </div>
+  </section>
+
+  <!-- =========================
+       CATEGORIES SECTION
+       ========================== -->
+  <section id="categories" class="section">
+    <h2>Machine Categories</h2>
+    <div class="category-grid">
+      <div class="category-card" data-filter="all">All Machines</div>
+      <div class="category-card" data-filter="forklift">Warehouse &amp; Forklifts</div>
+      <div class="category-card" data-filter="farming">Farming &amp; Agriculture</div>
+      <div class="category-card" data-filter="industrial">Industrial &amp; Construction</div>
+      <div class="category-card" data-filter="oil">Oils &amp; Lubricants</div>
+    </div>
+  </section>
+
+  <!-- =========================
+       PRODUCTS SECTION
+       ========================== -->
+  <section id="products" class="section">
+    <h2>Popular Machines</h2>
+    <div class="product-grid" id="productGrid"></div>
+  </section>
+
+  <!-- =========================
+       SERVICES SECTION
+       ========================== -->
+  <section id="services" class="section">
+    <h2>Our Services</h2>
+    <div class="services-grid">
+      <div class="service-card">
+        <img src="data:image/jpeg;base64,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" alt="Oil Change Service" class="service-img"> <!-- Image for Oil Change -->
+        <h3>Oil Change</h3>
+        <p>Regular oil change service for smooth operation.</p>
+        <ul class="service-list">
+          <li>Fast and efficient oil replacement</li>
+          <li>Use of premium-grade lubricants</li>
+          <li>Full inspection included</li>
+        </ul>
+      </div>
+      <div class="service-card">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3BF5gcvQ8rYO64ZpQAgi2lFWAQ1oXbYBSLw&s" alt="Installation Service" class="service-img"> <!-- Image for Installation -->
+        <h3>On‑site Installation</h3>
+        <p>Certified engineers install and test all machines at your site to ensure safe operation.</p>
+        <ul class="service-list">
+          <li>Pre‑delivery inspection and site readiness check</li>
+          <li>Full installation and commissioning</li>
+          <li>Operator training and safety briefing</li>
+        </ul>
+      </div>
+      <div class="service-card">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQGJtvKSwb7Zs7LnabK4nxuqf8qxg5MRr11A&s" alt="Support Service" class="service-img"> <!-- Image for Support -->
+        <h3>24/7 Support</h3>
+        <p>Remote diagnostics and quick spare‑part delivery to reduce your downtime.</p>
+        <ul class="service-list">
+          <li>Phone and remote support around the clock</li>
+          <li>On‑site breakdown assistance</li>
+          <li>Genuine spare parts and consumables</li>
+        </ul>
+      </div>
+      <div class="service-card">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGeZZhqT-QMV7JQzQV1JBOnxOaXsz3qI2nqw&s" alt="AMC & Leasing Service" class="service-img"> <!-- Image for AMC & Leasing -->
+        <h3>AMCs &amp; Leasing</h3>
+        <p>Annual maintenance contracts and flexible leasing options for better cash flow.</p>
+        <ul class="service-list">
+          <li>Preventive maintenance schedules</li>
+          <li>Flexible short‑term and long‑term leasing</li>
+          <li>Custom service plans for fleets</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================
+       CONTACT SECTION
+       ========================== -->
+  <section id="contact" class="section contact">
+    <h2>Contact Us</h2>
+    <form class="contact-form" id="contactForm">
+      <div class="form-row">
+        <input type="text" placeholder="Your name" required />
+        <input type="email" placeholder="Your email" required />
+      </div>
+      <div class="form-row">
+        <input type="text" placeholder="Company / Farm name" />
+      </div>
+      <textarea rows="4" placeholder="Tell us what machines you need..." required></textarea>
+      <button type="submit" class="btn primary">Send Request</button>
+    </form>
+  </section>
+
+  <!-- =========================
+       FAQ SECTION
+       ========================== -->
+  <section id="faq" class="section faq-section">
+    <h2>Frequently Asked Questions</h2>
+
+    <div class="faq-item">
+      <button class="faq-question">
+        What locations do you deliver machines to?
+        <span class="faq-toggle">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>
+          We can arrange delivery to most industrial and farming locations across India.
+          For remote sites, our team will confirm logistics and delivery charges before order confirmation.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">
+        Do you provide installation and operator training?
+        <span class="faq-toggle">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>
+          Yes, our engineers visit your site for installation, commissioning, and basic
+          operator training so your team can use the machines safely and efficiently.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">
+        Can I get financing or leasing options?
+        <span class="faq-toggle">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>
+          We work with finance partners and also offer in‑house leasing for selected models.
+          Share your requirements in the contact form and we will suggest the best option.
+        </p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question">
+        How long does delivery usually take?
+        <span class="faq-toggle">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>
+          Stock machines are usually dispatched within 7–10 working days.
+          Custom specifications may take longer depending on configuration and availability.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================
+       CART DRAWER + BACKDROP
+       ========================== -->
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-header">
+      <h3>Your Cart</h3>
+      <button id="cartCloseBtn" class="icon-btn">✕</button>
+    </div>
+    <div id="cartItems"></div>
+    <div class="cart-footer">
+      <div>Total: ₹<span id="cartTotal">0</span></div>
+      <button class="btn primary" id="buyNowBtn">Buy Now</button>
+    </div>
+  </div>
+  <footer class="footer" id="socials">
+    <p>Connect with us on social media</p>
+    <div class="drawer">
+      <div class="box">
+        <a href="https://www.instagram.com" target="_blank" class="ball ball-1 instagram"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.011 3.584-.069 4.85c-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.584-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.069-1.645-.069-4.85s.011-3.584.069-4.85c.149-3.225 1.664-4.771 4.919-4.919C8.416 2.175 8.796 2.163 12 2.163m0-2.163C8.74 0 8.333.011 7.053.072 2.695.272.273 2.69.073 7.052.012 8.333 0 8.74 0 12s.012 3.667.072 4.947c.2 4.358 2.618 6.78 6.98 6.98C8.333 23.988 8.74 24 12 24s3.667-.012 4.947-.072c4.358-.2 6.78-2.618 6.98-6.98.06-1.28.072-1.687.072-4.947s-.012-3.667-.072-4.947c-.2-4.358-2.618-6.78-6.98-6.98C15.667.012 15.26 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.88 1.44 1.44 0 000-2.88z"/></svg></a>
+        <a href="https://www.facebook.com" target="_blank" class="ball ball-2 facebook"><svg viewBox="0 0 24 24"><path d="M22.675 0h-21.35C.59 0 0 .59 0 1.325v21.35C0 23.41.59 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.735 0 1.325-.59 1.325-1.325V1.325C24 .59 23.41 0 22.675 0z"/></svg></a>
+        <a href="https://linkedin.com" target="_blank" class="ball ball-3 linkedin"><svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
+        <a href="https://github.com" target="_blank" class="ball ball-4 github"><svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>
+        <a href="https://www.x.com" target="_blank" class="ball ball-5 x-corp"><svg viewBox="0 0 512 512"><path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"/></svg></a>
+        <a href="mailto:your-email@example.com" class="ball ball-6 gmail"><svg viewBox="0 0 24 24"><path d="M22,6c0-1.1-0.9-2-2-2H4C2.9,4,2,4.9,2,6v12c0,1.1,0.9,2,2,2h16c1.1,0,2-0.9,2-2V6z M20,6l-8,5l-8-5H20z M4,18V8l8,5 l8-5v10H4z"/></svg></a>
+        <a href="https://wa.me/yourphonenumber" target="_blank" class="ball ball-7 whatsapp"><svg viewBox="0 0 24 24"><path d="M12.04 2.01c-5.52 0-9.99 4.47-9.99 9.99 0 1.77.46 3.45 1.26 4.93L2 22l5.25-1.38c1.44.73 3.07.95 4.79.95h.01c5.52 0 9.99-4.47 9.99-9.99s-4.47-9.99-9.99-9.99zM12.04 20.1c-1.55 0-3.04-.39-4.34-1.1L4.22 20l1.03-3.48c-.8-1.35-1.28-2.9-1.28-4.53 0-4.42 3.59-8 8-8s8 3.58 8 8-3.59 8-8 8zm4.57-6.45c-.25-.12-1.47-.72-1.7-.8s-.39-.12-.56.12c-.17.25-.64.8-.79.97s-.29.17-.55.06c-.25-.12-1.06-.39-2.02-1.25s-1.59-1.98-1.78-2.32c-.19-.34-.02-.52.1-.68.11-.14.25-.36.37-.53s.17-.29.25-.49c.08-.2.04-.37-.02-.49s-.56-1.34-.76-1.84c-.2-.48-.4-.42-.55-.42h-.48c-.17 0-.43.06-.66.31s-.87.85-.87 2.07c0 1.22.89 2.4 1.01 2.56s1.75 2.67 4.24 3.74c.59.25 1.05.4 1.41.51.6.19 1.14.16 1.56.1.48-.07 1.47-.6 1.67-1.18s.21-1.08.15-1.18c-.07-.1-.25-.16-.5-.28z"/></svg></a>
+      </div>
+      <div class="cover"><span></span></div>
+    </div>
+  </footer>
+
+  <!-- =========================
+       AI CHATBOT
+       ========================== -->
+  <div class="chatbot">
+    <div class="chatbot-header">
+      <p>AI Assistant</p>
+      <button class="back-btn" style="display: none;"><ion-icon name="arrow-back-outline"></ion-icon></button>
+      <span class="close-btn">&times;</span>
+    </div>
+    <div class="chatbot-body">
+      <div class="message bot-message">
+        <p>Hello! How can I help you with our machines today?</p>
+      </div>
+      <div id="quickOptions" class="quick-options"></div>
+    </div>
+    <div class="chatbot-footer">
+      <input type="text" id="chatbotInput" placeholder="Ask a question...">
+      <button id="chatbotSendBtn">Send</button>
+    </div>
+  </div>
+  
+  <button class="chatbot-toggle">
+    <ion-icon name="chatbubbles-outline"></ion-icon>
+  </button>
+
+  
+  <div class="backdrop" id="backdrop"></div>
+  
+
+  <!-- Main script file -->
+
+  <script src="chatbot.js" defer></script>
+  <script src="ex.js" defer></script>
+
+
+
+  
+</body>
+</html>
