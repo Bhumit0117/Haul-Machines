@@ -81,7 +81,7 @@ const products = [
     price: 2500,
     usage: "Hydraulic systems",
     tag: "Oil",
-    img: "oil1.png"
+    img: "https://cdn.moglix.com/p/M0vK0xWd5Bu2B-xxlarge.jpg"
   },
   {
     id: 10,
@@ -90,7 +90,7 @@ const products = [
     price: 3500,
     usage: "Diesel engines",
     tag: "Oil",
-    img: "oil2.png"
+    img: "https://rukminim2.flixcart.com/image/480/640/xif0q/vehicle-lubricant/f/i/k/2-5-bullet-pro-15w-50-api-sn-aeronix-original-imahc7hmmuhyznsc.jpeg?q=90"
   },
   {
     id: 11,
