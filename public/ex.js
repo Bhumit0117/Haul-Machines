@@ -4,7 +4,7 @@
 const products = [
   {
     id: 1,
-    name: "Haul Electric Forklift 3.5T",
+    name: "HHaul Electric Forklift 3.5T",
     category: "forklift",
     price: 1550000,
     usage: "Warehouse, factory",
